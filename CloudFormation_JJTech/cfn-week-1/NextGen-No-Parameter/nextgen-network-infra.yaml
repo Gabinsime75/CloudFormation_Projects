@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Template for nextgen network infrastructure
+Parameters: {}
+Metadata: {}
+Mappings: {}
+Conditions: {}
+  
+Resources: 
+  myVPC:
+  Type: AWS::EC2::VPC
+  Properties:
+    CidrBlock: 10.0.0.0/16
+    EnableDnsSupport: 'true'
+    EnableDnsHostnames: 'true'
+    Tags:
+     - Key: stack
+       Value: production
+
