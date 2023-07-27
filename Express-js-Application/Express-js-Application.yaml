@@ -1,0 +1,62 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation Template for Deploying Express.js Application
+
+Resources:
+  # EC2 Instance to host the Express.js application
+  WebServerInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: <YOUR_EC2_AMI_ID>   # Replace with the appropriate EC2 AMI ID
+      InstanceType: t2.micro       # Replace with the desired instance type
+      SecurityGroups:
+        - Ref: WebServerSecurityGroup
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          yum update -y
+          yum install -y git nodejs npm
+          git clone https://github.com/Gabinsime75/CloudFormation_Projects.git /var/www
+          cd /var/www
+          npm install
+          node index.js
+      Tags:
+        - Key: Name
+          Value: ExpressAppServer
+
+  # Security Group for the EC2 Instance
+  WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for the Express.js application
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: ExpressAppSG
+
+  # Amazon RDS Instance for the Database
+  DatabaseInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: ExpressDB
+      AllocatedStorage: 10
+      DBInstanceClass: db.t2.micro   # Replace with the desired RDS instance type
+      Engine: mysql                 # Replace with your preferred database engine (e.g., mysql, postgres, etc.)
+      MasterUsername: admin         # Replace with the desired database username
+      MasterUserPassword: admin123   # Replace with the desired database password
+      MultiAZ: false
+      Tags:
+        - Key: Name
+          Value: ExpressDB
+
+Outputs:
+  WebsiteURL:
+    Description: URL of the deployed web application
+    Value: !Sub http://${WebServerInstance.PublicIp}/
