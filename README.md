@@ -1,1 +1,1 @@
-## Deploying a Web Application using AWS CloudFormation
+# Deploying a Web Application using AWS CloudFormation
