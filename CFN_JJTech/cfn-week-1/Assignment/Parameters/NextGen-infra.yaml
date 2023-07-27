@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Template for nextgen network infrastructure
+Resources:
+# NextGen VPC
+  NextGenProdVPC:
+    Type: AWS::EC2::VPC
+    Properties: 
+        CidrBlock: 10.0.0.0/16
+        EnableDnsHostnames: true
+        EnableDnsSupport: true
+        Tags: 
+          - Key: Env
+            Value: Production
+          - Key:  name
+            Value: NextGenProd
+# NextGen App Server subnet
+  NextGenProdVPCAppserverSN:
+    Type: AWS::EC2::Subnet
+    Properties: 
+      VpcId:
+        Ref: NextGenProdVPC
+      AvailabilityZone: String
+      CidrBlock: 10.0.1.0/24
+      Tags: 
+        - Key:  Name
+          Value: NextGenProdVPCAppserverSN
+# NextGen Web Server subnet
+  NextGenProdVPCWebserverSN:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: NextGenProdVPC
+      CidrBlock: 10.0.0.0/24
+      AvailabilityZone: "us-east-1a"
+      Tags:
+      - Key: Name
+        Value: NextGenProdVPCWebserverSN
+# NextGen DB server subnet
+  NextGenProdVPCDBserverSN:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: 
+        Ref: NextGenProdVPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: "us-east-1a"
+      Tags:
+      - Key: Name
+        Value: NextGenProdVPCDBserverSN
