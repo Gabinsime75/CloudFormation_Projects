@@ -1,0 +1,85 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This template provigions the Next Gen Web, App and DB security groups
+
+Resources: 
+  # Webserver Security group
+  NextGenProdWebserverSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: NextGenProdWebserver security group
+      VpcId: !ImportValue NextGenProdVPCID
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      Tags:
+           - Value: Name
+             Key: NextGenProdWebserverSG
+
+  # Appserver Security group
+  NextGenProdAppserverSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: NextGenProdAppserver security group
+      VpcId: !ImportValue NextGenProdVPCID
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: SourceSecurityGroupId: !GetAtt NextGenProdWebserverSG.GroupID
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      Tags:
+           - Value: Name
+             Key: NextGenProdAppserverSG
+
+# DB security group
+  NextGenProdDBserverSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: NextGenProdDBserver security group
+      VpcId: !ImportValue NextGenProdVPCID
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: SourceSecurityGroupId: !GetAtt NextGenProdAppserverSG.GroupID
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 0.0.0.0/0
+      Tags:
+           - Value: Name
+             Key: NextGenProdDBserverSG
+
+Outputs:
+# Webserver SG
+  NextGenProdWebserverSGIDExpOutput:
+    Description: Exporting NextGenProdWebserver Security group ID
+    Value: !Ref NextGenProdWebserverSG
+    Export: 
+      Name: NextGenProdWebserverSGID
+
+# Appserver SG
+  NextGenProdAppserverSGIDExpOutput:
+    Description: Exporting NextGenProdAppserver Security group ID
+    Value: !Ref NextGenProdAppserverSG
+    Export: 
+      Name: NextGenProdAppserverSGID
+
+# DBserver SG
+  NextGenProdDBserverSGIDExpOutput:
+    Description: Exporting NextGenProdDBserver Security group ID
+    Value: !Ref NextGenProdDBserverSG
+    Export: 
+      Name: NextGenProdDBserverSGID

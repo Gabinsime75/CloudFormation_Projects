@@ -1,0 +1,39 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description:
+  Create ec2, s3, vpc, subnet along with metadata, parameters and Resources
+Metadata:
+  AWS::CloudFormation::Interface: 
+    ParameterGroups: 
+      - 
+        Label: 
+          default: "Compute"
+        Parameters: 
+          - EC2imageID   
+
+Parameters:
+  EC2imageID:
+    Type: String
+    Default: "ami-05fa00d4c63e32376"
+    AllowedValues:
+      - ami-05fa00d4c63e32376
+      - ami-052efd3df9dad4825
+    Description: Enter the ami id from the drop down
+
+
+
+Resources:
+
+  RahulEC2R:
+    Type: AWS::EC2::Instance
+    Properties: 
+      ImageId: !Ref EC2imageID
+      InstanceType: t2.micro
+      SubnetId: !ImportValue VPCSubnetImport
+      Tags: 
+        - Key: Project
+          Value : Banking
+
+
+
+

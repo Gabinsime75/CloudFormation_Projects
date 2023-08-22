@@ -1,0 +1,72 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description:
+  Create ec2, s3, vpc, subnet along with metadata, parameters and Resources
+Metadata:
+  AWS::CloudFormation::Interface: 
+    ParameterGroups: 
+      - 
+        Label: 
+          default: "Network Configuration"
+        Parameters: 
+          - VPCIDRahul
+          - VPCSubnetRahul
+
+Parameters:
+
+  VPCIDRahul:
+    Type: String
+    Default: 10.0.0.0/16
+    AllowedValues:
+      - 10.0.0.0/16
+      - 10.0.0.0/24
+    Description: Enter the VPC CIDR
+
+  VPCSubnetRahul:
+   Type: String
+
+Resources:
+  RahulVPCR:
+    Type: AWS::EC2::VPC
+    Properties: 
+      CidrBlock: !Ref VPCIDRahul
+      EnableDnsHostnames: True
+      EnableDnsSupport: True
+      Tags: 
+        - Key: Project
+          Value : Banking
+
+  RahulSubnetR:
+    Type: AWS::EC2::Subnet
+    Properties: 
+      CidrBlock: !Ref VPCSubnetRahul
+      Tags: 
+        - Key: Project
+          Value : Banking
+      VpcId: !Ref RahulVPCR
+
+Outputs:
+  VPCIDO:
+    Description: Output the VPC
+    Value: !Ref RahulVPCR
+    Export:
+      Name: VPCImport
+  
+  VPCIDSubnetO:
+    Description: Output the VPC Subnet
+    Value: !Ref RahulSubnetR
+    Export:
+      Name: VPCSubnetImport
+
+# Outputs:
+#   VPCIDO:
+#     Description: output the VPC
+#     Value: !Ref RahulVPCR
+#     Export: 
+#       Name: VPCImport
+
+#   VPCIDSubnetO:
+#     Description: output the VPC Subnet
+#     Value: !Ref RahulSubnetR
+#     Export: 
+#       Name: VPCSubnetImport

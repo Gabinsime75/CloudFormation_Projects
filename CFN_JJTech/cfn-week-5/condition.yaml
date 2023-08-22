@@ -1,0 +1,72 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This template provisions Next Gen Prod Webserver
+Metadata: {}
+
+Parameters: 
+  # NextGenProdWebserverInstanceType:
+  #   Description: Please select an instance type for your prod webserver
+  #   Type: String
+  #   Default: t2.micro
+  #   AllowedValues:
+  #     - t2.medium
+  #     - t2.large
+  #     - t2.xlarge
+  #     - t3.large
+  #     - t3.xlarge
+  #   ConstraintDescription: Selected value not supported
+
+
+  NextGenProdWebserverKeyName:
+    Description: Please select a key pair
+    Type: AWS::EC2::KeyPair::KeyName
+
+  NextGenEnvType:
+    Description: NextGen Environment types.
+    Default: dev
+    Type: String
+    AllowedValues:
+      - prod
+      - dev
+    ConstraintDescription: must specify prod or test.
+
+
+Mappings: 
+  NextGenProdWebserverGoldenAMIMap: 
+    us-east-1:
+      GoldenAMI: ami-09538990a0c4fe9be
+    us-east-2:
+      GoldenAMI: ami-098dd3a86ea110896
+    us-west-1:
+      GoldenAMI: ami-09c72d5a7ce529ad5
+    us-west-2:
+      GoldenAMI: ami-089ffe32605122764
+
+Conditions:
+  CreateNextGenProdResources: !Equals 
+    - !Ref NextGenEnvType
+    - prod
+
+Resources: 
+  NextGenProdWebserver1:
+    Type: AWS::EC2::Instance
+    # Condition: NextGenProdWebserverInstanceType
+    Properties:
+      KeyName: !Ref NextGenProdWebserverKeyName
+      ImageId: !FindInMap [ NextGenProdWebserverGoldenAMIMap, !Ref "AWS::Region", GoldenAMI ]
+      InstanceType: !If [CreateNextGenProdResources, t3.large, t2.micro]
+      Tags:
+        - Key: Name
+          Value: NextGenProdWebserver1
+
+  NextGenProdWebserver2:
+    Type: AWS::EC2::Instance
+    Condition: CreateNextGenProdResources
+    Properties:
+      KeyName: !Ref NextGenProdWebserverKeyName
+      ImageId: !FindInMap [ NextGenProdWebserverGoldenAMIMap, !Ref "AWS::Region", GoldenAMI ]
+      InstanceType: !If [CreateNextGenProdResources, t3.large, t2.micro]
+      Tags:
+        - Key: Name
+          Value: NextGenProdWebserver2
+
+Outputs: {}

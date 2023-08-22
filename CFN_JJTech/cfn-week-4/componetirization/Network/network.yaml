@@ -1,0 +1,224 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: this template provisions the nextgen|
+ prod network infrastructure 
+Parameters: 
+  #Nextgen prod vpc parameters
+  NextGenProdVPCCidrBlock:
+    Description: please provide your cidr block
+    Type: String
+    Default: 10.0.0.0/16
+  
+  #Nextgen prod vweb server parameters
+  NextGenProdVPCWebserverAZ1:
+    Description: please provide your prod webserver AZ1
+    Type: AWS::EC2::AvailabilityZone::Name 
+
+  NextGenProdVPCWebserverCidrBlock1:
+    Description: please provide your prod webserver subnet cidr block1
+    Type: String
+
+  NextGenProdVPCWebserverAZ2:
+    Description: please provide your prod webserver AZ2
+    Type: AWS::EC2::AvailabilityZone::Name 
+
+  NextGenProdVPCWebserverCidrBlock2:
+    Description: please provide your prod webserver subnet cidr block2
+    Type: String
+
+  #Nextgen Prod App Server Subnet Parameters
+  NextGenProdVPCAppserverSubnetAZ1:
+    Description: please provide your prod app server AZ1
+    Type: AWS::EC2::AvailabilityZone::Name
+
+  NextGenProdVPCAppserverCidrBlock1:
+    Description: please provide your prod webserver subnet cidr block
+    Type: String
+
+ #Nextgen Prod App Server Subnet Parameters
+  NextGenProdVPCAppserverSubnetAZ2:
+    Description: please provide your prod app server AZ2
+    Type: AWS::EC2::AvailabilityZone::Name
+
+  NextGenProdVPCAppserverCidrBlock2:
+    Description: please provide your prod webserver subnet cidr block
+    Type: String
+
+
+  #Nextgen Prod DB Server Subnet Parameters
+  NextGenProdVPCDBserverSubnetAZ1:
+    Description: please provide your prod DB server AZ1
+    Type: AWS::EC2::AvailabilityZone::Name
+
+  NextGenProdVPCDBserverCidrBlock1:
+    Description: please provide your prod DB server subnet cidr block1
+    Type: String
+
+ #Nextgen Prod DB Server Subnet Parameters
+  NextGenProdVPCDBserverSubnetAZ2:
+    Description: please provide your prod DB server AZ2
+    Type: AWS::EC2::AvailabilityZone::Name
+
+  NextGenProdVPCDBserverCidrBlock2:
+    Description: please provide your prod DB server subnet cidr block2
+    Type: String
+
+Metadata: 
+  AWS::CloudFormation::Interface:
+    ParameterGroups: 
+      - 
+        Label: 
+          default: "NextGen Prod Network Configuration"
+        Parameters: 
+          - NextGenProdVPCCidrBlock
+          # Webserver parameter grouping
+          - NextGenProdVPCWebserverAZ1
+          - NextGenProdVPCWebserverAZ2
+          - NextGenProdVPCWebserverCidrBlock1
+          - NextGenProdVPCWebserverCidrBlock2
+          # Appserver parameter grouping
+          - NextGenProdVPCAppserverSubnetAZ1
+          - NextGenProdVPCAppserverSubnetAZ2
+          - NextGenProdVPCAppserverCidrBlock1
+          - NextGenProdVPCAppserverCidrBlock2
+          # DBserver parameter grouping
+          - NextGenProdVPCDBserverSubnetAZ1
+          - NextGenProdVPCDBserverSubnetAZ2
+          - NextGenProdVPCDBserverCidrBlock1
+          - NextGenProdVPCDBserverCidrBlock2
+  
+Mappings: {}
+  
+Conditions: {}
+  
+Resources: 
+  NextGenProdVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref NextGenProdVPCCidrBlock
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      Tags:
+       - Key: env
+         Value: production
+       - Key: Name
+         Value: NextGenProdVPC
+  
+#nextgen prod web server subnet 1 
+  NextGenProdVPCWebserverSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref NextGenProdVPCWebserverAZ1
+      VpcId: !Ref NextGenProdVPC
+      CidrBlock: !Ref NextGenProdVPCWebserverCidrBlock1
+      Tags:
+        - Key: Name
+          Value: NextGenProdVPCWebserverSubnet1
+
+#nextgen prod web server subnet 2
+  NextGenProdVPCWebserverSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref NextGenProdVPCWebserverAZ2
+      VpcId: !Ref NextGenProdVPC
+      CidrBlock: !Ref NextGenProdVPCWebserverCidrBlock2
+      Tags:
+        - Key: Name
+          Value: NextGenProdVPCWebserverSubnet2
+
+#Nextgen Prod App Server Subnet1
+  NextGenProdVPCAppserverSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref NextGenProdVPCAppserverSubnetAZ1
+      VpcId: !Ref NextGenProdVPC
+      CidrBlock: !Ref NextGenProdVPCAppserverCidrBlock1
+      Tags:
+        - Key: Name
+          Value: NextGenProdVPCAppserverSubnet1
+
+#Nextgen Prod App Server Subnet2
+  NextGenProdVPCAppserverSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref NextGenProdVPCAppserverSubnetAZ2
+      VpcId: !Ref NextGenProdVPC
+      CidrBlock: !Ref NextGenProdVPCAppserverCidrBlock2
+      Tags:
+        - Key: Name
+          Value: NextGenProdVPCAppserverSubnet2
+           
+  
+#Nextgen Prod DB Server Subnet1
+  NextGenProdVPCDBserverSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref NextGenProdVPCDBserverSubnetAZ1
+      VpcId: !Ref NextGenProdVPC
+      CidrBlock: !Ref NextGenProdVPCDBserverCidrBlock1
+      Tags:
+        - Key: Name
+          Value: NextGenProdVPCDBSubnet1
+
+#Nextgen Prod DB Server Subnet2 
+  NextGenProdVPCDBserverSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref NextGenProdVPCDBserverSubnetAZ2
+      VpcId: !Ref NextGenProdVPC
+      CidrBlock: !Ref NextGenProdVPCDBserverCidrBlock2
+      Tags:
+        - Key: Name
+          Value: NextGenProdVPCDBSubnet2
+  
+## VPC Output  
+Outputs:
+  NextGenProdVPCIDExpOutput:
+    Description: Exporting vpc id
+    Value: !Ref NextGenProdVPC
+    Export: 
+      Name: NextGenProdVPCID
+
+## Webservers
+# Webserver subnet1 output
+  NextGenProdVPCWebserverSubnet1ExpOutput:
+    Description: Exporting NextGenProdVPCWebserverSubnet1 id
+    Value: !Ref NextGenProdVPCWebserverSubnet1
+    Export: 
+      Name: NextGenProdVPCWebserverSubnet1ID
+  
+# Webserver subnet2 output
+  NextGenProdVPCWebserverSubnet2ExpOutput:
+    Description: Exporting NextGenProdVPCWebserverSubnet2 id
+    Value: !Ref NextGenProdVPCWebserverSubnet2
+    Export: 
+      Name: NextGenProdVPCWebserverSubnet2ID 
+
+## Appservers
+# Appserver subnet1 output
+  NextGenProdVPCAppserverSubnet1ExpOutput:
+    Description: Exporting NextGenProdVPCAppserverSubnet1 id
+    Value: !Ref NextGenProdVPCAppserverSubnet1
+    Export: 
+      Name: NextGenProdVPCAppserverSubnet1ID
+  
+# Appserver subnet2 output
+  NextGenProdVPCAppserverSubnet2ExpOutput:
+    Description: Exporting NextGenProdVPCAppserverSubnet2 id
+    Value: !Ref NextGenProdVPCAppserverSubnet2
+    Export: 
+      Name: NextGenProdVPCAppserverSubnet2ID 
+
+## DBservers
+# DBserver subnet1 output
+  NextGenProdVPCDBserverSubnet1ExpOutput:
+    Description: Exporting NextGenProdVPCDBserverSubnet1 id
+    Value: !Ref NextGenProdVPCDBserverSubnet1
+    Export: 
+      Name: NextGenProdVPCDBserverSubnet1ID
+  
+# DBserver subnet2 output
+  NextGenProdVPCDBserverSubnet2ExpOutput:
+    Description: Exporting NextGenProdVPCDBserverSubnet2 id
+    Value: !Ref NextGenProdVPCDBserverSubnet2
+    Export: 
+      Name: NextGenProdVPCDBserverSubnet2ID

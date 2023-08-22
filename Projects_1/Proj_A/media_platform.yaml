@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Media Processing Platform
+
+Parameters:
+  InstanceType:
+    Type: String
+    Default: t2.micro
+    Description: EC2 instance type for the encoding fleet
+
+Resources:
+  MediaProcessingQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: MediaProcessingQueue
+
+  MediaProcessingBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: MediaProcessingBucket
+
+  MediaProcessingRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: MediaProcessingRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: MediaProcessingPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: s3:PutObject
+                Resource: !Join ['', ['arn:aws:s3:::', !Ref MediaProcessingBucket, '/*']]
+              - Effect: Allow
+                Action: sqs:SendMessage
+                Resource: !GetAtt MediaProcessingQueue.Arn
+
+  MediaProcessingInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      SecurityGroups:
+        - !Ref MediaProcessingSecurityGroup
+      KeyName: MyKeyPair
+      IamInstanceProfile: !Ref MediaProcessingRole
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          # Add your initialization script here
+
+  MediaProcessingSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Media Processing Security Group
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        # Add more ingress rules if required
+
+Outputs:
+  MediaProcessingQueueUrl:
+    Description: URL of the Media Processing SQS Queue
+    Value: !Ref MediaProcessingQueue
+
+  MediaProcessingBucketName:
+    Description: Name of the Media Processing S3 Bucket
+    Value: !Ref MediaProcessingBucket

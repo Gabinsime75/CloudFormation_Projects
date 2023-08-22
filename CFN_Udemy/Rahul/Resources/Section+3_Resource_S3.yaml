@@ -1,0 +1,14 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: This is the first cloudformation template to create S3 bucket
+Resources:
+ RahulS3bucket:
+  Type: AWS::S3::Bucket
+  Properties: 
+    BucketName: demobucket09070
+
+
+  
+
+
+

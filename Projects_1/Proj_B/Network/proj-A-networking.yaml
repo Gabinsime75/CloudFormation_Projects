@@ -1,0 +1,155 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: This is a template for the Proj_A networing. 
+
+# Parameters declaration
+Parameters:
+# Prpj_A VPC parameter
+  ProjAVPCCidrBlock:
+    Description: Enter your CidrBlock
+    Type: String
+    Default: 10.0.0.0/16
+
+# Proj_A Webserver parameters
+  ProjAWebserverAZ1:
+    Description: Enter your Proj_A Webserver AZ1
+    Type: AWS::EC2::AvailabilityZone::Name
+  ProjAWebserverAZ2:
+    Description: Enter your Proj_A Webserver AZ2
+    Type: AWS::EC2::AvailabilityZone::Name
+  ProjAWebServerCidrBlock1:
+    Description: Enter yout ProjA Webserver subnet cidr block 1
+    Type: String
+  ProjAWebServerCidrBlock2:
+    Description: Enter yout ProjA Webserver subnet cidr block 2
+    Type: String
+
+# Proj_A Appserver parameters
+  ProjAAppserverAZ1:
+    Description: Enter your Proj_A Appserver AZ1
+    Type: AWS::EC2::AvailabilityZone::Name
+  ProjAAppserverAZ2:
+    Description: Enter your Proj_A Appserver AZ2
+    Type: AWS::EC2::AvailabilityZone::Name
+  ProjAAppServerCidrBlock1:
+    Description: Enter yout ProjA Appserver subnet cidr block 1
+    Type: String 
+  ProjAAppServerCidrBlock2:
+    Description: Enter yout ProjA Appserver subnet cidr block 2
+    Type: String
+
+# Proj_A DBserver parameters
+  ProjADBserverAZ1:
+    Description: Enter your Proj_A DBserver AZ1
+    Type: AWS::EC2::AvailabilityZone::Name
+  ProjADBserverAZ2:
+    Description: Enter your Proj_A DBserver AZ2
+    Type: AWS::EC2::AvailabilityZone::Name
+  ProjADBServerCidrBlock1:
+    Description: Enter yout ProjA DBserver subnet cidr block 1
+    Type: String 
+  ProjADBServerCidrBlock2:
+    Description: Enter yout ProjA DBserver subnet cidr block 2
+    Type: String
+
+
+Metadata: 
+  AWS::CloudFormation::Interface: 
+    ParameterGroups: 
+      - 
+        Label: 
+          default: "Proj_A Network Configuration"
+        Parameters: 
+          - ProjAVPCidrBlock
+          # Webserver parameters
+          - ProjAWebserverAZ1
+          - ProjAWebserverAZ2
+          - ProjAWebServerCidrBlock1
+          - ProjAWebServerCidrBlock2
+          # App server parameters
+          - ProjAAppserverAZ1
+          - ProjAAppserverAZ2
+          - ProjAAppServerCidrBlock1
+          - ProjAAppServerCidrBlock2
+          # DB server parameter
+          - ProjADBserverAZ1
+          - ProjADBserverAZ2
+          - ProjADBServerCidrBlock1
+          - ProjADBServerCidrBlock2
+  
+     
+Resources:
+# Create network VPC
+  ProjAVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref ProjAVPCCidrBlock
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+      - Key: Name
+        Value: Proj_A-VPC
+      # - key: env
+      #   Value: production
+
+# Webservers subnets
+  ProjAWebSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref ProjAVPC
+      CidrBlock: !Ref ProjAWebServerCidrBlock1
+      AvailabilityZone: !Ref ProjAWebserverAZ1
+      Tags:
+      - Key: Name
+        Value: Proj_A-WebSubnet_1
+
+  ProjAWebSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref ProjAVPC
+      CidrBlock: !Ref ProjAWebServerCidrBlock2
+      AvailabilityZone: !Ref ProjAWebserverAZ2
+      Tags:
+      - Key: Name
+        Value: Proj_A-WebSubnet_2
+
+# Appservers subnets
+  ProjAAppSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref ProjAVPC
+      CidrBlock: !Ref ProjAAppServerCidrBlock1
+      AvailabilityZone: !Ref ProjAAppserverAZ1
+      Tags:
+      - Key: Name
+        Value: Proj_A-AppSubnet_1
+
+  ProjAAppSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref ProjAVPC
+      CidrBlock: !Ref ProjAAppServerCidrBlock2
+      AvailabilityZone: !Ref ProjAAppserverAZ2
+      Tags:
+      - Key: Name
+        Value: Proj_A-AppSubnet_2
+
+# DBservers subnets
+  ProjADBSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref ProjAVPC
+      CidrBlock: !Ref ProjADBServerCidrBlock1
+      AvailabilityZone: !Ref ProjADBserverAZ1
+      Tags:
+      - Key: Name
+        Value: Proj_A-DBSubnet_1
+
+  ProjADBSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref ProjAVPC
+      CidrBlock: !Ref ProjADBServerCidrBlock2
+      AvailabilityZone: !Ref ProjADBserverAZ2
+      Tags:
+      - Key: Name
+        Value: Proj_A-DBSubnet_2

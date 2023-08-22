@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This template provisions the NextGen Prod RDS DB instance
+Metadata: {}
+
+Parameters: 
+  NextGenProdDBInstanceMasterUsername:
+    Description: Please provide the Prod DB master username
+    Type: AWS::SSM::Parameter::Value<String>
+
+  NextGenProdDBInstanceMasterUserPassword:
+    Description: Please provide the Prod DB master user password
+    Type: AWS::SSM::Parameter::Value<String>
+
+Resources:
+  NexGenDBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: NextGenProd-DB subnet group
+      SubnetIds:
+        - !ImportValue NextGenProdVPCDBserverSubnet1ID # Import 1
+        - !ImportValue NextGenProdVPCDBserverSubnet2ID # Import 2
+    Tags:
+      - Key: keyname
+        Value: NexGenDBSubnetGroup
+
+  NextGenProdDBInstance:
+    Type: 'AWS::RDS::DBInstance'
+    Properties:
+      DBInstanceIdentifier: "nextgenproddb"
+      DBName: "nextgenproddb"
+      DBInstanceClass: db.m5.large
+      AllocatedStorage: 30
+      Engine: MySQL
+      EngineVersion: "8.0.33"
+      MasterUsername: !Ref NextGenProdDBInstanceMasterUsername
+      MasterUserPassword: !Ref NextGenProdDBInstanceMasterUserPassword
+      DBSubnetGroupName: !Ref NexGenDBSubnetGroup
+      VPCSecurityGroups: 
+        - !ImportValue NextGenProdDBserverSGID #Import 3

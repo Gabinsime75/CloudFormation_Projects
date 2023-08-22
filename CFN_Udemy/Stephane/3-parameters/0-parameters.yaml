@@ -1,0 +1,7 @@
+AWSTemplateFormatVersion: 
+Description: This a practice template // Stephane 
+
+paramName:
+  Description: 
+  Type: String|Number|CommaDelimitedList
+  Default: -

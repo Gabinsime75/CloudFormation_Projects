@@ -1,0 +1,90 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: this template provisions the nextgen|
+ prod network infrastructure 
+Parameters: 
+  #Nextgen prod vpc parameters
+  NextGenProdVPCCidrBlock:
+    Description: please provide your cidr block
+    Type: String
+    Default: 10.0.0.0/16
+  
+  #Nextgen prod vweb server parameters
+  NextGenProdVPCWebserverAZ:
+    Description: please provide your prod webserver AZ 
+    Type: AWS::EC2::AvailabilityZone::Name 
+
+  NextGenProdVPCWebserverCidrBlock:
+    Description: please provide your prod webserver subnet cidr block
+    Type: String
+
+  #Nextgen Prod App Server Subnet Parameters
+  NextGenProdVPCAppserverSubnetAZ:
+    Description: please provide your prod app server AZ
+    Type: AWS::EC2::AvailabilityZone::Name
+
+  NextGenProdVPCAppserverCidrBlock:
+    Description: please provide your prod webserver subnet cidr block
+    Type: String
+
+  #Nextgen Prod DB Server Subnet Parameters
+  NextGenProdVPCDBserverSubnetAZ:
+    Description: please provide your prod DB server AZ
+    Type: AWS::EC2::AvailabilityZone::Name
+
+  NextGenProdVPCDBserverCidrBlock:
+    Description: please provide your prod DB server subnet cidr block
+    Type: String
+
+Metadata: {}
+  
+Mappings: {}
+  
+Conditions: {}
+  
+Resources: 
+  NextGenProdVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref NextGenProdVPCCidrBlock
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      Tags:
+       - Key: env
+         Value: production
+       - Key: Name
+         Value: NextGenProdVPC
+  
+#nextgen prod web server subnet 
+  NextGenProdVPCWebserverSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref NextGenProdVPCWebserverAZ
+      VpcId: !Ref NextGenProdVPC
+      CidrBlock: !Ref NextGenProdVPCWebserverCidrBlock
+      Tags:
+        - Key: Name
+          Value: NextGenProdVPCWebserverSubnet
+
+#Nextgen Prod App Server Subnet
+  NextGenProdVPCAppserverSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref NextGenProdVPCAppserverSubnetAZ
+      VpcId: !Ref NextGenProdVPC
+      CidrBlock: !Ref NextGenProdVPCAppserverCidrBlock
+      Tags:
+        - Key: Name
+          Value: NextGenProdVPCAppserverSubnet
+  
+#Nextgen Prod DB Server Subnet 
+  NextGenProdVPCDBserverSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref NextGenProdVPCDBserverSubnetAZ
+      VpcId: !Ref NextGenProdVPC
+      CidrBlock: !Ref NextGenProdVPCDBserverCidrBlock
+      Tags:
+        - Key: Name
+          Value: NextGenProdVPCDBSubnet
+  
+Outputs: {}
